@@ -1,0 +1,11 @@
+{
+  "name": "rest",
+  "version": "1.0.0",
+  "description": "Api rest para proyecto angular y android",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Javier Luciano López",
+  "license": "ISC"
+}
