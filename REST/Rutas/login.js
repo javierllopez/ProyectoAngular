@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
 
                 // Generar y enviar el token JWT utilizando la clave secreta de sesión
                 const token = jwt.sign({ id: user.id, username: user.username }, sessionSecret, { expiresIn: '1h' });
-                res.json({ token });
+                return res.json({ token });
             } else {
                 // Incrementar el contador de intentos fallidos y bloquear la cuenta si es necesario
                 await pool.query('UPDATE usuarios SET intentos_fallidos = intentos_fallidos + 1 WHERE id = ?', [user.id]);
@@ -56,14 +56,14 @@ router.post('/', async (req, res) => {
                     await pool.query('UPDATE usuarios SET bloqueado_hasta = ? WHERE id = ?', [bloqueadoHasta, user.id]);
                 }
 
-                res.status(401).json({ mensaje: 'Credenciales inválidas' });
+                return res.status(401).json({ mensaje: 'Credenciales inválidas' });
             }
         } else {
-            res.status(404).json({ mensaje: 'Usuario no encontrado' });
+            return res.status(404).json({ mensaje: 'Usuario no encontrado' });
         }
     } catch (error) {
         console.error('Error al realizar la consulta:', error);
-        res.status(500).json({ mensaje: 'Error al iniciar sesión' });
+        return res.status(500).json({ mensaje: 'Error al iniciar sesión' });
     }
 });
 
