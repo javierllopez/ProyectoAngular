@@ -1,9 +1,18 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const pool = require('../Datos/db'); // Importar la conexión desde db.js
+const crypto = require('crypto');
+const pool = require('../Datos/db');
+const session = require('express-session');
 
 const router = express.Router();
+
+// Configurar express-session para manejar las sesiones de usuario
+router.use(session({
+    secret: 'secretoDeSesion', // Clave secreta para firmar las cookies de sesión
+    resave: false,
+    saveUninitialized: true,
+}));
 
 // Endpoint para el login
 router.post('/', async (req, res) => {
@@ -28,8 +37,14 @@ router.post('/', async (req, res) => {
                 // Restablecer el contador de intentos fallidos
                 await pool.query('UPDATE usuarios SET intentos_fallidos = 0 WHERE id = ?', [user.id]);
 
-                // Generar y enviar el token JWT
-                const token = jwt.sign({ id: user.id, username: user.username }, 'secretoJWT', { expiresIn: '1h' });
+                // Generar la clave secreta de sesión
+                const sessionSecret = crypto.randomBytes(32).toString('hex');
+
+                // Almacenar la clave secreta de sesión en el objeto de sesión del usuario
+                req.session.sessionSecret = sessionSecret;
+
+                // Generar y enviar el token JWT utilizando la clave secreta de sesión
+                const token = jwt.sign({ id: user.id, username: user.username }, sessionSecret, { expiresIn: '1h' });
                 res.json({ token });
             } else {
                 // Incrementar el contador de intentos fallidos y bloquear la cuenta si es necesario
