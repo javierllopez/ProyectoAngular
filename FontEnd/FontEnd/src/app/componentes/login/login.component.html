@@ -1,0 +1,17 @@
+<mat-dialog-content>
+    <h2 mat-dialog-title>Login</h2>
+    <mat-form-field>
+      <input matInput placeholder="Usuario" [(ngModel)]="username">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="password" placeholder="Contraseña" [(ngModel)]="password">
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="onCancel()">Cancelar</button>
+    <button mat-raised-button color="primary" (click)="onLogin()">Aceptar</button>
+  </mat-dialog-actions>
+  <div mat-dialog-actions>
+    <a mat-button routerLink="/forgot-password">¿Olvidaste tu contraseña?</a>
+  </div>
+  
